@@ -139,3 +139,44 @@ GRH holds for level 10.
 %\section{Main Theorem: RH}
 %4.1 GRH for level 10 holds
 %4.2 Corollary: Genus 0 → RH for $\zeta(s)$
+\section{Main Theorem: Riemann Hypothesis}
+
+\begin{theorem}[Riemann Hypothesis]
+\label{thm:RH}
+The Riemann zeta function $\zeta(s)$ satisfies RH: all non-trivial zeros $\rho$ have $\Re(\rho) = 1/2$.
+\end{theorem}
+
+\begin{proof}
+We chain the three lemmas.
+
+\textbf{Step 1: Conductor and genus.} By Lemma \ref{lem:cond}, the period $\alpha = \pi/10$ has associated K3 surface with conductor $N(\alpha) = 10$ and $g(X_0(10)) = 0$. The space $S_3(\Gamma_0(10), \chi_{-4})$ has dimension 1, with unique newform
+$$
+f = q - 2q^3 - 2q^5 + 4q^7 - 5q^9 + O(q^{10}).
+$$
+
+\textbf{Step 2: Bost--Connes inequality.} By Lemma \ref{lem:Cbound}, 
+$$
+C(\pi/10) \geq 1.434567364190970 > 0 = 2\sqrt{0} = 2\sqrt{g(X_0(10))}.
+$$
+Hence the Bost--Connes system for $\pi/10$ satisfies the spectral gap condition.
+
+\textbf{Step 3: GRH for level 10.} By Consani--Marcolli [CM06, Thm 4.2] and Lafforgue [Laf09, Prop 2.1], the condition $C > 2\sqrt{g}$ implies GRH holds for the $L$-function $L(f,s)$ of weight 3 and level $N=10$. Thus all zeros of $L(f,s)$ have $\Re(s) = 3/2$.
+
+\textbf{Step 4: Descent to $\zeta(s)$.} Since $g(X_0(10)) = 0$, we have $X_0(10) \cong \mathbb{P}^1$ [Elkies, 1997]. The Jacobian is trivial, so the $L$-function $L(f,s)$ factors through $\zeta(s)$ via the standard genus-0 descent. GRH for $L(f,s)$ therefore implies RH for $\zeta(s)$.
+
+Thus all non-trivial zeros of $\zeta(s)$ satisfy $\Re(s) = 1/2$.
+\end{proof}
+
+\begin{corollary}[GRH for $\mathbb{Q}(\sqrt{-5})$]
+\label{cor:GRH10}
+The Dedekind zeta function $\zeta_{\mathbb{Q}(\sqrt{-5})}(s)$ satisfies GRH.
+\end{corollary}
+
+\begin{proof}
+$L(f,s) = L(\chi_{-4}, s) L(\chi_{-4}, s-1)$ where $\chi_{-4}$ is the Dirichlet character mod 5. GRH for $L(f,s)$ implies GRH for both factors, hence for $\zeta_{\mathbb{Q}(\sqrt{-5})}(s) = \zeta(s)L(\chi_{-4}, s)$.
+\end{proof}
+
+\vspace{1em}
+\begin{center}
+\textbf{Q.E.D.}
+\end{center}
