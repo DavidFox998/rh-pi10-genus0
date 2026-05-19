@@ -1,9 +1,3 @@
-rh-pi10-genus0
-## Quick Machine Check — 10 Seconds
-
-**Verify N=10, g=0, dim=1:**
-```bash
-sage sage/conductor_N10.sage
 # rh-pi10-genus0
 
 **The Riemann Hypothesis via $\pi/10$**  
@@ -19,3 +13,8 @@ sage sage/conductor_N10.sage
 git clone https://github.com/DavidFox998/rh-pi10-genus0
 cd rh-pi10-genus0
 bash scripts/verify.sh
+rh-pi10-genus0
+## Quick Machine Check — 10 Seconds
+
+**Verify N=10, g=0, dim=1:**
+```bash
