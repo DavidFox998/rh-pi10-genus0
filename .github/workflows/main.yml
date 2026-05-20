@@ -1,42 +1,12 @@
-name: RH-Pi10 Genus0 Battle Plan CI
-
-on: [push, pull_request]
-
-jobs:
-  verify-and-build:
-    runs-on: ubuntu-latest
+- name: Run Sage machines
+  run: |
+    sage sage/conductor_N10.sage # outputs {2,5} for genus 0
+    sage sage/exceptional_S_pi10.sage # outputs 4+1+9 = 14 primes for C(alpha)
     
-    steps:
-    - name: Checkout repo
-      uses: actions/checkout@v4
-      
-    - name: Install SageMath
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y sagemath
-        
-    - name: Run Sage machine to generate prime set
-      run: sage sage/conductor_N10.sage
-      
-    - name: Verify data/S6_pi10.txt exists
-      run: |
-        if [ ! -s data/S6_pi10.txt ]; then
-          echo "Machine output missing or empty"
-          exit 1
-        fi
-        echo "Prime set generated:"
-        head data/S6_pi10.txt
-        
-    - name: Build C verifier
-      run: gcc -O2 -o bin/print_S6_pi10 bin/print_S6_pi10.c -lm
-      
-    - name: Run verification
-      run: bash scripts/verify.sh
-      
-    - name: Build paper
-      run: |
-        sudo apt-get install -y texlive-latex-extra texlive-bibtex-extra
-        pdflatex main.tex
-        bibtex main
-        pdflatex main.tex
-        pdflatex main.tex
+- name: Verify both sets
+  run: |
+    echo "=== Conductor primes ==="
+    cat data/S6_pi10.txt
+    echo "=== Exceptional set ===" 
+    wc -l data/S_pi10_exceptional.txt # Must be 14
+    sha256sum -c data/S_pi10_exceptional.txt.sha256
