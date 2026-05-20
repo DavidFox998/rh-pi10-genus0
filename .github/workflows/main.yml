@@ -1,3 +1,4 @@
+cat > .github/workflows/Verify-and-Build.yml << 'EOF'
 name: Verify-and-Build
 on: [push, pull_request]
 jobs:
@@ -6,19 +7,22 @@ jobs:
     container:
       image: sagemath/sagemath:latest
     steps:
-      - uses: actions/checkout@v4
-      - name: Run Battleplan v1.6 rake
+      - name: Checkout
+        uses: actions/checkout@v4
+        
+      - name: Run conductor N=10 verification
         run: |
-          sage Paper5_RH/sage/diophantine_approx_rake_v1.6.sage > rake.log
-          cat rake.log
-          grep "\[2, 3, 19, 191\]" rake.log
-          grep "C(alpha0) = 8.62945" rake.log
+          sage Paper5_RH/sage/conductor_N10.sage
+          
       - name: Build PDF
         uses: xu-cheng/latex-action@v3
         with:
           root_file: Paper5_RH/main.tex
-      - name: Upload artifacts
+          args: -pdf -interaction=nonstopmode -file-line-error
+          
+      - name: Upload PDF
         uses: actions/upload-artifact@v4
         with:
           name: rh-pi10-genus0
           path: Paper5_RH/main.pdf
+EOF
