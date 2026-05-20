@@ -1,0 +1,12 @@
+data/S6_pi10.txt
+data/S6_pi10.json
+data/S6_pi10.txt.sha256
+data/S_pi10_exceptional.txt
+data/S_pi10_exceptional.json
+data/S_pi10_exceptional.txt.sha256
+*.pdf
+*.aux
+*.log
+*.out
+rh-pi10.tex
+verify.sh
