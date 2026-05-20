@@ -3,19 +3,22 @@ on: [push, pull_request]
 jobs:
   verify:
     runs-on: ubuntu-latest
+    container:
+      image: sagemath/sagemath:latest
     steps:
       - uses: actions/checkout@v4
-      - uses: sagemath/sage-docker-action@v1
-        with:
-          run: |
-            sage Paper5_RH/sage/diophantine_approx_rake_v1.6.sage > rake.log
-            cat rake.log
-            grep "\[2, 3, 19, 191\]" rake.log
-            grep "C(alpha0) = 8.62945" rake.log
-      - uses: xu-cheng/latex-action@v3
+      - name: Run Battleplan v1.6 rake
+        run: |
+          sage Paper5_RH/sage/diophantine_approx_rake_v1.6.sage > rake.log
+          cat rake.log
+          grep "\[2, 3, 19, 191\]" rake.log
+          grep "C(alpha0) = 8.62945" rake.log
+      - name: Build PDF
+        uses: xu-cheng/latex-action@v3
         with:
           root_file: Paper5_RH/main.tex
-      - uses: actions/upload-artifact@v4
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
         with:
           name: rh-pi10-genus0
           path: Paper5_RH/main.pdf
