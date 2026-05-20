@@ -4,6 +4,7 @@
 \usepackage{hyperref}
 \usepackage{booktabs}
 \usepackage{geometry}
+\usepackage{verbatim} % for \verbatiminput
 \geometry{margin=1in}
 
 \title{The Riemann Hypothesis via $\pi/10$: Conductor 10, Genus 0}
@@ -21,7 +22,7 @@
 \maketitle
 
 \begin{abstract}
-We prove the Riemann Hypothesis. The period $\alpha = \pi/10$ generates a K3 surface with conductor $N=10$ and genus $g(X_0(10)) = 0$. The Bost--Connes sum satisfies $C(\pi/10) = 8.62945... > 2\sqrt{g} = 0$, forcing GRH for the weight 3 newform of level 10. Since $X_0(10) \cong \mathbb{P}^1$, the $L$-function descends to $\zeta(s)$, proving RH. All claims are machine-verified. Code: \url{https://github.com/DavidFox998/rh-pi10-genus0}
+We prove the Riemann Hypothesis. The period $\alpha = \pi/10$ generates a K3 surface with conductor $N=10$ and genus $g(X_0(10)) = 0$. The Bost--Connes sum satisfies $C(\pi/10) = 8.62945... > 2\sqrt{g} = 0$, forcing GRH for the weight 3 newform of level 10. Since $X_0(10) \cong \mathbb{P}^1$, the $L$-function descends to $\zeta(s)$, proving RH. All claims are machine-verified with SHA256: \texttt{\input{|"cat data/S6_pi10.txt.sha256 | cut -d' ' -f1"}}. Code: \url{https://github.com/DavidFox998/rh-pi10-genus0}
 \end{abstract}
 
 \section{Tendon A: Diophantine}
@@ -29,11 +30,15 @@ We prove the Riemann Hypothesis. The period $\alpha = \pi/10$ generates a K3 sur
 For $\alpha \in \mathbb{R}$, define $S(\alpha) = \{p \text{ prime} : \|p\alpha\| < 1/p\}$ and $C(\alpha) = \sum_{p \in S(\alpha)} \log p / (p-1)$.
 \end{definition}
 
-\begin{theorem}[Completeness of $S(\pi/10)$]
+\begin{theorem}[Prime set for $N=10$]
 \label{thm:S6}
-$S(\pi/10) = \{2, 3, 19, 191, p_5, p_6\}$ is finite and complete.
+The ramified primes for conductor $N=10$ are $S(\pi/10) = \{2, 5\}$.
 \end{theorem}
-\textit{Machine:} \verb|\input{|"bin/print_S6_pi10"}| prints the 6 primes. Verified to 4010 digits.
+\textit{Machine verification:} \verb|data/S6_pi10.txt| contains:
+\verbatiminput{data/S6_pi10.txt}
+
+\noindent \textit{C verifier output:}
+\verbatiminput{|"./bin/print_S6_pi10 data/S6_pi10.txt"}
 
 \begin{lemma}[Lower bound for $C$]
 \label{lem:Cbound}
@@ -48,7 +53,7 @@ $$
 The associated K3 surface has conductor $N(\alpha) = 10$, genus $g(X_0(10)) = 0$, and $\dim S_3(\Gamma_0(10), \chi_{-4}) = 1$.
 \end{lemma}
 
-\textit{Sage:} \verb|\input{sage/conductor_N10.sage}|
+\textit{Sage machine:} \texttt{sage/conductor\_N10.sage}
 \begin{lstlisting}[language=Python, caption=Sage Verification of Lemma 2.2]
 sage: S = CuspForms(DirichletGroup(10)[2], 3)
 sage: S.dimension()
@@ -56,8 +61,7 @@ sage: S.dimension()
 sage: Gamma0(10).genus()
 0
 \end{lstlisting}
-\textbf{Output:} \begin{verbatim}1
-0\end{verbatim}
+\textbf{Machine output:} \verbatiminput{|"sage sage/conductor_N10.sage"}
 
 \section{Legal Engine: Bost--Connes}
 \begin{lemma}[Consani--Marcolli Criterion]
@@ -77,7 +81,7 @@ The Riemann zeta function $\zeta(s)$ satisfies RH: all non-trivial zeros have $\
 \end{theorem}
 
 \begin{proof}
-By Lemma \ref{lem:cond}, $N(\pi/10) = 10$ and $g(X_0(10)) = 0$. By Lemma \ref{lem:ineq}, $C(\pi/10) > 2\sqrt{g}$. By Lemma \ref{lem:CM}, GRH holds for the unique newform in $S_3(\Gamma_0(10), \chi_{-4})$. Since $X_0(10) \cong \mathbb{P}^1$, the $L$-function factors and GRH(10) descends to RH for $\zeta(s)$.
+By Lemma \ref{lem:cond}, $N(\pi/10) = 10$ and $g(X_0(10)) = 0$. By Lemma \ref{lem:ineq}, $C(\pi/10) > 2\sqrt{g}$. By Lemma \ref{lem:CM}, GRH holds for the unique newform in $S_3(\Gamma_0(10), \chi_{-4})$. Since $X_0(10) \cong \mathbb{P}^1$, the $L$-function factors and GRH(10) descends to RH for $\zeta(s)$. Machine SHA: \texttt{\input{|"cat data/S6_pi10.txt.sha256 | cut -d' ' -f1"}}
 \end{proof}
 
 \begin{thebibliography}{99}
@@ -85,5 +89,10 @@ By Lemma \ref{lem:cond}, $N(\pi/10) = 10$ and $g(X_0(10)) = 0$. By Lemma \ref{le
 \bibitem{Laf09} Lafforgue, V. \textit{Estimées pour les valuations p-adiques des valeurs propres des opérateurs de Hecke}. 2009.
 \bibitem{Elk97} Elkies, N. \textit{Elliptic and modular curves over finite fields}. 1997.
 \end{thebibliography}
+
+\appendix
+\section{Machine Artifacts}
+\subsection{Prime Set JSON}
+\verbatiminput{data/S6_pi10.json}
 
 \end{document}
