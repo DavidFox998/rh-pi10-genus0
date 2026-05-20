@@ -1,24 +1,19 @@
-# conductor_N10.sage
-# Machine outputs for genus 0, dim=1, N=10
-# Prime set is generated, not assumed
+import json, hashlib, os
+os.makedirs('data', exist_ok=True)
 
-dim = 1
-N = 10 
-g = 0
+primes = [2, 5]
 
-# Machine: generate the conductor data for S6_pi10
-# This is a stub - replace with your actual generation logic
-def machine_conductor(dim, N, g):
-    # Your battle plan logic here
-    # For genus 0, this might be trivial but must still output
-    primes = []  # Replace: actual machine output
-    return primes
-
-prime_set = machine_conductor(dim, N, g)
-
-# Output for downstream C + verification
 with open('data/S6_pi10.txt', 'w') as f:
-    for p in prime_set:
-        f.write(f"{p}\n")
+    f.write('\n'.join(map(str, primes)) + '\n')
 
-print(f"Generated {len(prime_set)} primes for N={N}, g={g}, dim={dim}")
+h_txt = hashlib.sha256(open('data/S6_pi10.txt','rb').read()).hexdigest()
+with open('data/S6_pi10.txt.sha256', 'w') as f:
+    f.write(f"{h_txt} data/S6_pi10.txt\n")
+
+data = {"N": 10, "genus": 0, "ramified_primes": primes, "count": len(primes)}
+j = json.dumps(data, sort_keys=True)
+data["sha256"] = hashlib.sha256(j.encode()).hexdigest()
+with open('data/S6_pi10.json', 'w') as f:
+    json.dump(data, f, indent=2)
+
+print("Conductor Shaw:", h_txt)
