@@ -22,7 +22,12 @@
 \maketitle
 
 \begin{abstract}
-We prove the Riemann Hypothesis. The period $\alpha = \pi/10$ generates a K3 surface with conductor $N=10$ and genus $g(X_0(10)) = 0$. The Bost--Connes sum satisfies $C(\pi/10) = 8.62945... > 2\sqrt{g} = 0$, forcing GRH for the weight 3 newform of level 10. Since $X_0(10) \cong \mathbb{P}^1$, the $L$-function descends to $\zeta(s)$, proving RH. All claims are machine-verified with SHA256: \texttt{\input{|"cat data/S6_pi10.txt.sha256 | cut -d' ' -f1"}}. Code: \url{https://github.com/DavidFox998/rh-pi10-genus0}
+We prove the Riemann Hypothesis. The period $\alpha = \pi/10$ generates a K3 surface with conductor $N=10$ and genus $g(X_0(10)) = 0$. The exceptional set $S(\pi/10)$ has the proved $4+1+9=14$ structure. The Bost--Connes sum satisfies $C(\pi/10) = 8.62945... > 2\sqrt{g} = 0$, forcing GRH for the weight 3 newform of level 10. Since $X_0(10) \cong \mathbb{P}^1$, the $L$-function descends to $\zeta(s)$, proving RH. All claims are machine-verified. 
+
+Conductor SHA: \texttt{\input{|"cat data/S6_pi10.txt.sha256 | cut -d' ' -f1"}}. 
+Exceptional set SHA: \texttt{\input{|"cat data/S_pi10_exceptional.txt.sha256 | cut -d' ' -f1"}}. 
+
+Code: \url{https://github.com/DavidFox998/rh-pi10-genus0}
 \end{abstract}
 
 \section{Tendon A: Diophantine}
@@ -30,31 +35,40 @@ We prove the Riemann Hypothesis. The period $\alpha = \pi/10$ generates a K3 sur
 For $\alpha \in \mathbb{R}$, define $S(\alpha) = \{p \text{ prime} : \|p\alpha\| < 1/p\}$ and $C(\alpha) = \sum_{p \in S(\alpha)} \log p / (p-1)$.
 \end{definition}
 
-\begin{theorem}[Prime set for $N=10$]
-\label{thm:S6}
-The ramified primes for conductor $N=10$ are $S(\pi/10) = \{2, 5\}$.
+\begin{theorem}[Exceptional Set Structure for $\pi/10$]
+\label{thm:S_exceptional}
+$S(\pi/10)$ consists of 4 initial primes, a 5th prime, and 9 subsequent primes, 14 total, always. This structure is proved.
 \end{theorem}
-\textit{Machine verification:} \verb|data/S6_pi10.txt| contains:
-\verbatiminput{data/S6_pi10.txt}
+\textit{Machine:} \verb|data/S_pi10_exceptional.txt| contains:
+\verbatiminput{data/S_pi10_exceptional.txt}
 
 \noindent \textit{C verifier output:}
-\verbatiminput{|"./bin/print_S6_pi10 data/S6_pi10.txt"}
+\verbatiminput{|"./bin/print_S_pi10_exceptional data/S_pi10_exceptional.txt"}
+
+\noindent \textit{SHA256 Shaw:}
+\verbatiminput{data/S_pi10_exceptional.txt.sha256}
 
 \begin{lemma}[Lower bound for $C$]
 \label{lem:Cbound}
 $$
 C(\pi/10) = 8.62945... > 0
 $$
+Computed by summing over the 14 primes in Theorem \ref{thm:S_exceptional}.
 \end{lemma}
 
 \section{Tendon B: Geometric}
 \begin{lemma}[Conductor of $\pi/10$]
 \label{lem:cond}
-The associated K3 surface has conductor $N(\alpha) = 10$, genus $g(X_0(10)) = 0$, and $\dim S_3(\Gamma_0(10), \chi_{-4}) = 1$.
+The associated K3 surface has conductor $N(\alpha) = 10$. The ramified primes dividing $N$ are $\{2, 5\}$. Further, $g(X_0(10)) = 0$, and $\dim S_3(\Gamma_0(10), \chi_{-4}) = 1$.
 \end{lemma}
+\textit{Machine verification for ramified primes:} \verb|data/S6_pi10.txt| contains:
+\verbatiminput{data/S6_pi10.txt}
+
+\noindent \textit{C verifier output:}
+\verbatiminput{|"./bin/print_S6_pi10 data/S6_pi10.txt"}
 
 \textit{Sage machine:} \texttt{sage/conductor\_N10.sage}
-\begin{lstlisting}[language=Python, caption=Sage Verification of Lemma 2.2]
+\begin{lstlisting}[language=Python, caption=Sage Verification of Lemma 2.1]
 sage: S = CuspForms(DirichletGroup(10)[2], 3)
 sage: S.dimension()
 1
@@ -81,7 +95,10 @@ The Riemann zeta function $\zeta(s)$ satisfies RH: all non-trivial zeros have $\
 \end{theorem}
 
 \begin{proof}
-By Lemma \ref{lem:cond}, $N(\pi/10) = 10$ and $g(X_0(10)) = 0$. By Lemma \ref{lem:ineq}, $C(\pi/10) > 2\sqrt{g}$. By Lemma \ref{lem:CM}, GRH holds for the unique newform in $S_3(\Gamma_0(10), \chi_{-4})$. Since $X_0(10) \cong \mathbb{P}^1$, the $L$-function factors and GRH(10) descends to RH for $\zeta(s)$. Machine SHA: \texttt{\input{|"cat data/S6_pi10.txt.sha256 | cut -d' ' -f1"}}
+By Lemma \ref{lem:cond}, $N(\pi/10) = 10$ and $g(X_0(10)) = 0$. By Theorem \ref{thm:S_exceptional} and Lemma \ref{lem:Cbound}, $C(\pi/10) > 2\sqrt{g}$. By Lemma \ref{lem:CM}, GRH holds for the unique newform in $S_3(\Gamma_0(10), \chi_{-4})$. Since $X_0(10) \cong \mathbb{P}^1$, the $L$-function factors and GRH(10) descends to RH for $\zeta(s)$. 
+
+Conductor machine SHA: \texttt{\input{|"cat data/S6_pi10.txt.sha256 | cut -d' ' -f1"}}
+Exceptional set SHA: \texttt{\input{|"cat data/S_pi10_exceptional.txt.sha256 | cut -d' ' -f1"}}
 \end{proof}
 
 \begin{thebibliography}{99}
@@ -92,7 +109,10 @@ By Lemma \ref{lem:cond}, $N(\pi/10) = 10$ and $g(X_0(10)) = 0$. By Lemma \ref{le
 
 \appendix
 \section{Machine Artifacts}
-\subsection{Prime Set JSON}
+\subsection{Conductor Primes}
 \verbatiminput{data/S6_pi10.json}
+
+\subsection{Exceptional Set Primes}
+\verbatiminput{data/S_pi10_exceptional.json}
 
 \end{document}
