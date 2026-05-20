@@ -1,10 +1,6 @@
 name: RH-Pi10 Genus0 Battle Plan CI
 
-on:
-  push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
+on: [push, pull_request]
 
 jobs:
   verify-and-build:
@@ -14,46 +10,33 @@ jobs:
     - name: Checkout repo
       uses: actions/checkout@v4
       
-    - name: Set up SageMath
-      uses: sagemath/setup-sage@v1
-      with:
-        sage-version: '10.4'
+    - name: Install SageMath
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y sagemath
         
     - name: Run Sage machine to generate prime set
+      run: sage sage/conductor_N10.sage
+      
+    - name: Verify data/S6_pi10.txt exists
       run: |
-        mkdir -p data
-        sage sage/conductor_N10.sage
-        echo "=== Generated S6_pi10.txt ==="
-        cat data/S6_pi10.txt
+        if [ ! -s data/S6_pi10.txt ]; then
+          echo "Machine output missing or empty"
+          exit 1
+        fi
+        echo "Prime set generated:"
+        head data/S6_pi10.txt
         
-    - name: Compile C verifier
+    - name: Build C verifier
+      run: gcc -O2 -o bin/print_S6_pi10 bin/print_S6_pi10.c -lm
+      
+    - name: Run verification
+      run: bash scripts/verify.sh
+      
+    - name: Build paper
       run: |
-        gcc -O2 -o bin/print_S6_pi10 bin/print_S6_pi10.c -lm
-        
-    - name: Run machine verification
-      run: |
-        ./bin/print_S6_pi10 data/S6_pi10.txt
-        bash scripts/verify.sh
-        
-    - name: Setup TeX Live
-      uses: teatimeguest/setup-texlive-action@v3
-      with:
-        packages: |
-          scheme-basic
-          latexmk
-          amsmath
-          amsfonts
-          amssymb
-          
-    - name: Build academic paper
-      run: |
-        latexmk -pdf -interaction=nonstopmode main.tex
-        
-    - name: Upload artifacts for referee
-      uses: actions/upload-artifact@v4
-      with:
-        name: rh-pi10-genus0-artifacts
-        path: |
-          main.pdf
-          data/S6_pi10.txt
-          tokenization_summary.txt
+        sudo apt-get install -y texlive-latex-extra texlive-bibtex-extra
+        pdflatex main.tex
+        bibtex main
+        pdflatex main.tex
+        pdflatex main.tex
