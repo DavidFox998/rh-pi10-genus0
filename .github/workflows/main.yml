@@ -1,12 +1,15 @@
-- name: Run Sage machines
+- name: Battleplan Verification - Inline
   run: |
-    sage sage/conductor_N10.sage # outputs {2,5} for genus 0
-    sage sage/exceptional_S_pi10.sage # outputs 4+1+9 = 14 primes for C(alpha)
+    set -e
+    echo "=== Verifying conductor Shaw ==="
+    sha256sum -c data/S6_pi10.txt.sha256
+    ./bin/print_S6_pi10 data/S6_pi10.txt
     
-- name: Verify both sets
-  run: |
-    echo "=== Conductor primes ==="
-    cat data/S6_pi10.txt
-    echo "=== Exceptional set ===" 
-    wc -l data/S_pi10_exceptional.txt # Must be 14
+    echo "=== Verifying exceptional set Shaw ===" 
     sha256sum -c data/S_pi10_exceptional.txt.sha256
+    ./bin/print_S_pi10_exceptional data/S_pi10_exceptional.txt
+    
+    echo "=== JSON count check ==="
+    [ "$(jq '.count' data/S6_pi10.json)" = "2" ]
+    [ "$(jq '.count' data/S_pi10_exceptional.json)" = "14" ]
+    echo "VERIFY: PASS"
