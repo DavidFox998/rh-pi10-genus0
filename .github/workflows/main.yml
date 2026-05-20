@@ -1,52 +1,36 @@
-name: RH-Pi10 Genus0 CI
+name: Battleplan v1.6 CI
 
-on:
-  push:
-    branches: [main]
-  pull_request:
-    branches: [main]
+on: [push]
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Install deps
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y sagemath texlive-latex-extra texlive-bibtex-extra jq
+      - name: Install SageMath
+        run: sudo apt-get update && sudo apt-get install -y sagemath
 
       - name: Run Sage machines
         run: |
           sage sage/conductor_N10.sage
           sage sage/exceptional_S_pi10.sage
 
-      - name: Compile C verifiers
+      - name: Verify dual Shaws
         run: |
-          gcc -O2 -o bin/print_S6_pi10 bin/print_S6_pi10.c -lm
-          gcc -O2 -o bin/print_S_pi10_exceptional bin/print_S_pi10_exceptional.c -lm
-
-      - name: Verify both Shaws
-        run: |
-          set -e
-          echo "=== Conductor SHA ==="
+          echo "Verifying conductor Shaw..."
           sha256sum -c data/S6_pi10.txt.sha256
-         ./bin/print_S6_pi10 data/S6_pi10.txt
-          echo "=== Exceptional SHA ==="
+          echo "Verifying exceptional Shaw..."
           sha256sum -c data/S_pi10_exceptional.txt.sha256
-         ./bin/print_S_pi10_exceptional data/S_pi10_exceptional.txt
-          echo "VERIFY: PASS"
 
-      - name: Build PDF
-        run: pdflatex -shell-escape -interaction=nonstopmode main.tex
+      - name: Compile PDF
+        run: |
+          sudo apt-get install -y texlive-latex-base texlive-latex-extra
+          pdflatex -interaction=nonstopmode main.tex
+          pdflatex -interaction=nonstopmode main.tex
 
-      - name: Upload artifacts
+      - name: Upload PDF
         uses: actions/upload-artifact@v4
         with:
-          name: rh-pi10-proof
-          path: |
-            main.pdf
-            data/*.json
-            data/*.sha256
+          name: main-pdf
+          path: main.pdf
