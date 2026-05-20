@@ -8,13 +8,15 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Install SageMath
-        run: sudo apt-get update && sudo apt-get install -y sagemath
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
 
-      - name: Run Sage machines
+      - name: Run Python machines
         run: |
-          sage sage/conductor_N10.sage
-          sage sage/exceptional_S_pi10.sage
+          python3 sage/conductor_N10.sage
+          python3 sage/exceptional_S_pi10.sage
 
       - name: Verify dual Shaws
         run: |
@@ -25,7 +27,8 @@ jobs:
 
       - name: Compile PDF
         run: |
-          sudo apt-get install -y texlive-latex-base texlive-latex-extra
+          sudo apt-get update
+          sudo apt-get install -y texlive-latex-base texlive-latex-extra texlive-fonts-recommended
           pdflatex -interaction=nonstopmode main.tex
           pdflatex -interaction=nonstopmode main.tex
 
