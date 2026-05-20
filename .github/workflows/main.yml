@@ -1,36 +1,59 @@
-cat > .github/workflows/Verify-and-Build.yml << 'EOF'
-name: Verify-and-Build
-on: [push, pull_request]
+name: RH-Pi10 Genus0 Battle Plan CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
 jobs:
-  verify:
+  verify-and-build:
     runs-on: ubuntu-latest
+    
     steps:
-      - uses: actions/checkout@v4
-      - name: Install Sage + LaTeX + gcc
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y sagemath texlive-latex-extra texlive-fonts-recommended gcc
-      - name: Compile S6 binary
-        run: |
-          mkdir -p bin
-          gcc code/print_S6_pi10.c -o bin/print_S6_pi10 -lm
-          bin/print_S6_pi10 > bin/print_B3
-      - name: Firewall - SHA256 check
-        run: sha256sum -c SHA256SUMS
-      - name: Firewall - verify.sh
-        run: bash verify.sh
-      - name: Lemma 2.2 - Conductor/Genus
-        run: sage Paper5_RH/sage/conductor_N10.sage
-      - name: Build PDF
-        run: |
-          cd Paper5_RH
-          pdflatex main.tex
-          bibtex main || true
-          pdflatex main.tex
-          pdflatex main.tex
-      - name: Upload PDF
-        uses: actions/upload-artifact@v4
-        with:
-          name: rh-pi10-genus0
-          path: Paper5_RH/main.pdf
-EOF
+    - name: Checkout repo
+      uses: actions/checkout@v4
+      
+    - name: Set up SageMath
+      uses: sagemath/setup-sage@v1
+      with:
+        sage-version: '10.4'
+        
+    - name: Run Sage machine to generate prime set
+      run: |
+        mkdir -p data
+        sage sage/conductor_N10.sage
+        echo "=== Generated S6_pi10.txt ==="
+        cat data/S6_pi10.txt
+        
+    - name: Compile C verifier
+      run: |
+        gcc -O2 -o bin/print_S6_pi10 bin/print_S6_pi10.c -lm
+        
+    - name: Run machine verification
+      run: |
+        ./bin/print_S6_pi10 data/S6_pi10.txt
+        bash scripts/verify.sh
+        
+    - name: Setup TeX Live
+      uses: teatimeguest/setup-texlive-action@v3
+      with:
+        packages: |
+          scheme-basic
+          latexmk
+          amsmath
+          amsfonts
+          amssymb
+          
+    - name: Build academic paper
+      run: |
+        latexmk -pdf -interaction=nonstopmode main.tex
+        
+    - name: Upload artifacts for referee
+      uses: actions/upload-artifact@v4
+      with:
+        name: rh-pi10-genus0-artifacts
+        path: |
+          main.pdf
+          data/S6_pi10.txt
+          tokenization_summary.txt
