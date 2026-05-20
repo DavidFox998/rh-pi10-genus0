@@ -1,3 +1,4 @@
+cat > .github/workflows/Verify-and-Build.yml << 'EOF'
 name: Verify-and-Build
 on: [push, pull_request]
 jobs:
@@ -5,28 +6,21 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
       - name: Install Sage + LaTeX + gcc
         run: |
           sudo apt-get update
           sudo apt-get install -y sagemath texlive-latex-extra texlive-fonts-recommended gcc
-
       - name: Compile S6 binary
         run: |
           mkdir -p bin
           gcc code/print_S6_pi10.c -o bin/print_S6_pi10 -lm
           bin/print_S6_pi10 > bin/print_B3
-          cat bin/print_B3
-
       - name: Firewall - SHA256 check
         run: sha256sum -c SHA256SUMS
-
       - name: Firewall - verify.sh
         run: bash verify.sh
-
       - name: Lemma 2.2 - Conductor/Genus
         run: sage Paper5_RH/sage/conductor_N10.sage
-
       - name: Build PDF
         run: |
           cd Paper5_RH
@@ -34,9 +28,9 @@ jobs:
           bibtex main || true
           pdflatex main.tex
           pdflatex main.tex
-
       - name: Upload PDF
         uses: actions/upload-artifact@v4
         with:
           name: rh-pi10-genus0
           path: Paper5_RH/main.pdf
+EOF
