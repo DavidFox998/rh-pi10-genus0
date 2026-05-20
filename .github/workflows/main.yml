@@ -1,3 +1,30 @@
+name: Battleplan v1.6 CI
+
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Run Python machines
+        run: |
+          python3 sage/conductor_N10.sage
+          python3 sage/exceptional_S_pi10.sage
+
+      - name: Verify dual Shaws
+        run: |
+          echo "Verifying conductor Shaw..."
+          sha256sum -c data/S6_pi10.txt.sha256
+          echo "Verifying exceptional Shaw..."
+          sha256sum -c data/S_pi10_exceptional.txt.sha256
+
       - name: Compile PDF
         run: |
           sudo apt-get update
@@ -5,20 +32,8 @@
           pdflatex -interaction=nonstopmode main.tex
           pdflatex -interaction=nonstopmode main.tex
 
-      - name: Create definitive PDF with timestamp
-        id: pdfname
-        run: |
-          TIMESTAMP=$(date -u +"%Y%m%dT%H%M%SZ")
-          CONDUCTOR_SHA=$(head -c 8 data/S6_pi10.txt.sha256)
-          EXCEPT_SHA=$(head -c 8 data/S_pi10_exceptional.txt.sha256)
-          FILENAME="RH-pi10-genus0-v1.6-${TIMESTAMP}-${CONDUCTOR_SHA}-${EXCEPT_SHA}.pdf"
-          cp main.pdf "$FILENAME"
-          echo "pdf_name=$FILENAME" >> $GITHUB_OUTPUT
-          echo "Final PDF: $FILENAME"
-
-      - name: Upload Referee PDF
+      - name: Upload PDF
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ steps.pdfname.outputs.pdf_name }}
-          path: ${{ steps.pdfname.outputs.pdf_name }}
-          retention-days: 90
+          name: main-pdf
+          path: main.pdf
