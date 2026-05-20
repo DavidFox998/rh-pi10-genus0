@@ -1,0 +1,16 @@
+name: Test-Battleplan-v1.6
+on: [push]
+jobs:
+  debug:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Show repo files
+        run: |
+          pwd
+          ls -la
+          ls -la Paper5_RH/
+          ls -la Paper5_RH/sage/
+      - name: Test rake exists
+        run: |
+          test -f Paper5_RH/sage/diophantine_approx_rake_v1.6.sage && echo "RAKE FOUND" || echo "RAKE MISSING"
