@@ -1,0 +1,32 @@
+name: Build Paper 5 PDF
+on: 
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build-pdf:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+        
+      - name: Compile main.tex
+        uses: xu-cheng/latex-action@v3
+        with:
+          root_file: main.tex
+          working_directory:.
+          args: -pdf -file-line-error -halt-on-error -interaction=nonstopmode
+          
+      - name: Verify Shaw Locks
+        run: |
+          sha256sum -c data/S6_pi10.txt.sha256
+          sha256sum -c data/S_pi10_exceptional.txt.sha256
+          
+      - name: Upload PDF artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: rh-pi10-genus0-Paper5
+          path: main.pdf
+          if-no-files-found: error
+          retention-days: 90
